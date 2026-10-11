@@ -1,0 +1,42 @@
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+pythonpath = ["."]
+env = ["DJANGO_SECRET_KEY=test-only-key", "DJANGO_DEBUG=false"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "DJ"]
+ignore = ["RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+# DJ001 is right for a schema you design, where blank="" beats NULL. These
+# columns are nullable in a database nobody here created, and modelling
+# them as anything else would be the model lying about the data.
+# DJ012 checks declaration order using a list of known field classes, so
+# the custom fields in legacy/fields.py read as not-fields and the check
+# misfires. The order in the file is the one the style guide asks for.
+"legacy/models.py" = ["DJ001", "DJ012"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+files = ["config", "legacy"]
+exclude = ["migrations"]
+
+[[tool.mypy.overrides]]
+module = ["django_filters.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["legacy.filters"]
+disallow_subclassing_any = false
+
+[tool.django-stubs]
+django_settings_module = "config.settings"

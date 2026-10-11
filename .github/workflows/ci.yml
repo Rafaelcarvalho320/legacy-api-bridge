@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  DJANGO_SECRET_KEY: ci-only-not-a-real-secret-long-enough-to-pass-checks
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Format check
+        run: ruff format --check .
+      - name: Type check
+        run: mypy
+      - name: Django checks
+        run: python manage.py check --fail-level WARNING
+      - name: Migrations are up to date with the models
+        # An unmanaged model still gets a migration: Django records its state
+        # with managed=False and never emits DDL for it. The check is worth
+        # keeping precisely because of that - if a model ever loses its Meta,
+        # the next migration would quietly offer to create TB_CLI for real.
+        run: python manage.py makemigrations --check --dry-run
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: legacy
+          POSTGRES_USER: legacy
+          POSTGRES_PASSWORD: legacy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+
+      - name: Test against SQLite
+        run: pytest -q
+
+      - name: Test against PostgreSQL
+        # The legacy SQL is portable, but the point of the project is coping
+        # with a real database, so the same suite runs against one.
+        env:
+          DATABASE_URL: postgres://legacy:legacy@localhost:5432/legacy
+        run: pytest -q
+
+  demo:
+    # The README quotes these numbers, so they have to stay true.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Loading the legacy schema reports the soft-delete gap
+        run: |
+          python manage.py migrate --noinput
+          output=$(python manage.py load_legacy)
+          echo "$output"
+          echo "$output" | grep -q "clients visible: 7 (of 8 rows in TB_CLI)"
+          echo "$output" | grep -q "orders visible:  7 (of 8 rows in TB_PED)"
