@@ -16,42 +16,42 @@
 --   * Status is a single letter whose meaning lives in a paper manual.
 --   * Soft deletes: rows are never removed, only flagged.
 
-CREATE TABLE TB_CLI (
-    CD_CLI      INTEGER      NOT NULL PRIMARY KEY,
-    NM_CLI      VARCHAR(60)  NOT NULL,
-    NR_CPFCNPJ  VARCHAR(18),
-    DT_CADAST   VARCHAR(8),
-    FL_ATIVO    CHAR(1),
-    FL_EXCLUI   CHAR(1),
-    TP_PESSOA   CHAR(1),
-    NM_EMAIL    VARCHAR(80),
-    NR_FONE     VARCHAR(20),
-    CD_CIDADE   INTEGER
+CREATE TABLE "TB_CLI" (
+    "CD_CLI"      INTEGER      NOT NULL PRIMARY KEY,
+    "NM_CLI"      VARCHAR(60)  NOT NULL,
+    "NR_CPFCNPJ"  VARCHAR(18),
+    "DT_CADAST"   VARCHAR(8),
+    "FL_ATIVO"    CHAR(1),
+    "FL_EXCLUI"   CHAR(1),
+    "TP_PESSOA"   CHAR(1),
+    "NM_EMAIL"    VARCHAR(80),
+    "NR_FONE"     VARCHAR(20),
+    "CD_CIDADE"   INTEGER
 );
 
-CREATE TABLE TB_CID (
-    CD_CIDADE   INTEGER      NOT NULL PRIMARY KEY,
-    NM_CIDADE   VARCHAR(60)  NOT NULL,
-    SG_UF       CHAR(2)      NOT NULL
+CREATE TABLE "TB_CID" (
+    "CD_CIDADE"   INTEGER      NOT NULL PRIMARY KEY,
+    "NM_CIDADE"   VARCHAR(60)  NOT NULL,
+    "SG_UF"       CHAR(2)      NOT NULL
 );
 
-CREATE TABLE TB_PED (
-    CD_PEDIDO   INTEGER      NOT NULL PRIMARY KEY,
-    CD_CLI      INTEGER      NOT NULL,
-    DT_EMISSAO  VARCHAR(8),
-    VL_TOTAL    INTEGER,
-    ST_PEDIDO   CHAR(1),
-    FL_EXCLUI   CHAR(1),
-    OBS_PEDIDO  VARCHAR(255)
+CREATE TABLE "TB_PED" (
+    "CD_PEDIDO"   INTEGER      NOT NULL PRIMARY KEY,
+    "CD_CLI"      INTEGER      NOT NULL,
+    "DT_EMISSAO"  VARCHAR(8),
+    "VL_TOTAL"    INTEGER,
+    "ST_PEDIDO"   CHAR(1),
+    "FL_EXCLUI"   CHAR(1),
+    "OBS_PEDIDO"  VARCHAR(255)
 );
 
 -- Composite primary key, no surrogate id, and the line number is part of the
 -- identity. Deleting line 2 of a three-line order leaves 1 and 3.
-CREATE TABLE TB_PEDITE (
-    CD_PEDIDO   INTEGER      NOT NULL,
-    NR_ITEM     INTEGER      NOT NULL,
-    DS_PRODUTO  VARCHAR(80)  NOT NULL,
-    QT_ITEM     INTEGER      NOT NULL,
-    VL_UNIT     INTEGER      NOT NULL,
-    PRIMARY KEY (CD_PEDIDO, NR_ITEM)
+CREATE TABLE "TB_PEDITE" (
+    "CD_PEDIDO"   INTEGER      NOT NULL,
+    "NR_ITEM"     INTEGER      NOT NULL,
+    "DS_PRODUTO"  VARCHAR(80)  NOT NULL,
+    "QT_ITEM"     INTEGER      NOT NULL,
+    "VL_UNIT"     INTEGER      NOT NULL,
+    PRIMARY KEY ("CD_PEDIDO", "NR_ITEM")
 );

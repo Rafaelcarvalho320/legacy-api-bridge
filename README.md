@@ -94,7 +94,7 @@ sai da consulta), `to_python` (o que vem de um form ou serializer) e
 `makemigrations` ignora, e a suíte constrói o schema rodando o mesmo `.sql` que
 um DBA reconheceria.
 
-## Quatro bugs que esse tipo de banco produz
+## Cinco bugs que esse tipo de banco produz
 
 Todos apareceram durante o desenvolvimento, nenhum por leitura de código. Cada
 um tem teste.
@@ -118,6 +118,15 @@ entregava `None`. Resolvido com `get_internal_type()` devolvendo `"CharField"`.
 100 e o campo multiplicava de novo, então o limiar ficava cem vezes maior e a
 consulta não casava com nada, silenciosamente. Quem sabe de centavos é um lugar
 só.
+
+**5. O schema funcionava em SQLite e não existia no PostgreSQL.** `CREATE TABLE
+TB_CLI` sem aspas faz o Postgres criar uma tabela chamada `tb_cli`, porque ele
+rebaixa identificador não citado para minúsculas. O Django emite
+`FROM "TB_CLI"`, que é case-sensitive, e os dois nunca se encontram:
+`relation "TB_CLI" does not exist`. Todo identificador no DDL passou a ser
+citado. Esse é o motivo de a CI rodar a suíte contra PostgreSQL de verdade e não
+só contra SQLite — em SQLite o nome de tabela é case-insensitive e o bug é
+invisível.
 
 ## Rodando
 

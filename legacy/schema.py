@@ -15,7 +15,10 @@ SQL_DIR = Path(__file__).resolve().parent / "sql"
 SCHEMA_FILE = SQL_DIR / "legacy_schema.sql"
 SEED_FILE = SQL_DIR / "legacy_seed.sql"
 
-TABLES = ("TB_PEDITE", "TB_PED", "TB_CLI", "TB_CID")
+#: Quoted, and in dependency order. PostgreSQL folds an unquoted
+#: identifier to lower case, so CREATE TABLE TB_CLI makes a table called
+#: tb_cli while Django emits FROM "TB_CLI" - and the two never meet.
+TABLES = ('"TB_PEDITE"', '"TB_PED"', '"TB_CLI"', '"TB_CID"')
 
 
 def statements(path: Path) -> list[str]:

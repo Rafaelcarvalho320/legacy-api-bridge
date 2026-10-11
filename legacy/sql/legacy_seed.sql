@@ -1,12 +1,12 @@
 -- Sample data, including the messy cases that make the translation layer
 -- necessary rather than decorative.
 
-INSERT INTO TB_CID (CD_CIDADE, NM_CIDADE, SG_UF) VALUES
+INSERT INTO "TB_CID" ("CD_CIDADE", "NM_CIDADE", "SG_UF") VALUES
     (1, 'BELEM', 'PA'),
     (2, 'SAO PAULO', 'SP'),
     (3, 'RIO DE JANEIRO', 'RJ');
 
-INSERT INTO TB_CLI (CD_CLI, NM_CLI, NR_CPFCNPJ, DT_CADAST, FL_ATIVO, FL_EXCLUI, TP_PESSOA, NM_EMAIL, NR_FONE, CD_CIDADE) VALUES
+INSERT INTO "TB_CLI" ("CD_CLI", "NM_CLI", "NR_CPFCNPJ", "DT_CADAST", "FL_ATIVO", "FL_EXCLUI", "TP_PESSOA", "NM_EMAIL", "NR_FONE", "CD_CIDADE") VALUES
     -- A perfectly ordinary row.
     (1, 'MARIA SILVA', '123.456.789-00', '20200115', 'S', 'N', 'F', 'maria@exemplo.com', '91999990001', 1),
     -- Same document, written without punctuation. Two systems, two habits.
@@ -24,7 +24,7 @@ INSERT INTO TB_CLI (CD_CLI, NM_CLI, NR_CPFCNPJ, DT_CADAST, FL_ATIVO, FL_EXCLUI, 
     -- Points at a city that does not exist. No constraint ever stopped it.
     (8, 'ORFAO SEM CIDADE', '33344455566', '20230801', 'S', 'N', 'F', NULL, NULL, 999);
 
-INSERT INTO TB_PED (CD_PEDIDO, CD_CLI, DT_EMISSAO, VL_TOTAL, ST_PEDIDO, FL_EXCLUI, OBS_PEDIDO) VALUES
+INSERT INTO "TB_PED" ("CD_PEDIDO", "CD_CLI", "DT_EMISSAO", "VL_TOTAL", "ST_PEDIDO", "FL_EXCLUI", "OBS_PEDIDO") VALUES
     (1001, 1, '20240110', 125050, 'A', 'N', 'ENTREGAR PELA MANHA'),
     (1002, 1, '20240215', 8990,   'F', 'N', NULL),
     (1003, 2, '20240220', 450000, 'P', 'N', 'AGUARDANDO PAGAMENTO'),
@@ -37,7 +37,7 @@ INSERT INTO TB_PED (CD_PEDIDO, CD_CLI, DT_EMISSAO, VL_TOTAL, ST_PEDIDO, FL_EXCLU
     -- Order whose client was soft-deleted.
     (1008, 5, '20240405', 99900,  'F', 'N', NULL);
 
-INSERT INTO TB_PEDITE (CD_PEDIDO, NR_ITEM, DS_PRODUTO, QT_ITEM, VL_UNIT) VALUES
+INSERT INTO "TB_PEDITE" ("CD_PEDIDO", "NR_ITEM", "DS_PRODUTO", "QT_ITEM", "VL_UNIT") VALUES
     (1001, 1, 'PARAFUSO SEXTAVADO 10MM', 100, 150),
     (1001, 2, 'PORCA 10MM',              100, 100),
     (1001, 3, 'ARRUELA LISA 10MM',       200, 50),
